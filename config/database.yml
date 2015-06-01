@@ -25,4 +25,5 @@ production: &default
   database: todoism
   encoding: utf8
   min_messages: warning
-  pool: 5000timeoute: 5000
+  pool: 5
+  timeout: 5000
