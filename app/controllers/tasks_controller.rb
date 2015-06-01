@@ -12,8 +12,9 @@ class TasksController < ApplicationController
   end
 
   def show
-    respond_with(@task)
+		redirect_to tasks_path
   end
+  
 
   def new
     @task = Task.new
@@ -21,17 +22,20 @@ class TasksController < ApplicationController
   end
 
   def edit
+	unless @task.user == current_user
+		redirect_to tasks_path
+	end
   end
 
   def create
     @task = current_user.tasks.new(task_params)
     @task.save
-    respond_with(@task)
+	redirect_to tasks_path
   end
 
   def update
     @task.update(task_params)
-    respond_with(@task)
+	redirect_to tasks_path
   end
 
   def destroy
@@ -41,16 +45,18 @@ class TasksController < ApplicationController
   
   def change
 	@task.update_attributes(state: params[:state])
-	respond_to do |format|
-		format.html {redirect_to tasks_path, notice: "Task Update"}
-	end
+	redirect_to tasks_path
   end
   
   private
     def set_task
-      @task = Task.find(params[:id])
-    end
-
+		unless Task.exists?(params[:id])
+			redirect_to tasks_path
+		else
+			@task = Task.find(params[:id])
+		end
+	end
+	
     def task_params
       params.require(:task).permit(:content,:state)
     end
